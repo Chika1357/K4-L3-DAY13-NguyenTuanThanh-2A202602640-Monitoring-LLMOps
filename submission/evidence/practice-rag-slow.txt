@@ -1,0 +1,14 @@
+# CP2 — 2026-09-29T08:38:29Z — Langfuse project day13-k4-l3a-2A202602640
+# Practice (KHÔNG phải challenge chính thức): rag_slow bật 08:37:15Z, tắt 08:37:49Z
+## Metric: dashboard latency panel
+window P95 = 3552.0 ms, threshold p95 <= 3000 -> ok = False
+P95 per minute: [('08:31', 1305.0), ('08:32', 1330.0), ('08:34', 157.0), ('08:37', 3552.0)]
+## Log
+{"service": "api", "latency_ms": 2652, "ttft_ms": 50, "tokens_in": 53, "tokens_out": 107, "cost_usd": 0.001764, "quality_score": 0.9, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."}, "event": "response_sent", "user_id_hash": "4d14d5d4f719", "model": "claude-sonnet-4-5", "env": "dev", "correlation_id": "req-b95303ca", "session_id": "s09", "feature": "qa", "level": "info", "ts": "2026-09-29T08:37:42.092345Z"}
+## Trace
+
+req-b95303ca -> trace_id=a550c1b3bbc9de754beeca98df591637
+  lab-agent-run   AGENT      +     0ms    2653ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2502ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2502ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2502ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 53, 'output': 107, 'total': 160} cost=0.001764 prompt=day13-chat v2

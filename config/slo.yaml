@@ -3,11 +3,31 @@ primary_slo:
   name: fast_successful_requests
   window: 28d
   sli:
+    # Một request "tốt" = trả lời thành công VÀ nhanh hơn 3 s (ngưỡng P95 của dashboard).
+    # Request lỗi (request_failed) hoặc chậm > 3000 ms đều tiêu error budget.
     good_event: 'event == "response_sent" and latency_ms <= 3000'
     total_event: 'event == "request_received"'
   target_percent: 99.5
   error_budget_percent: 0.5
-  note: Học viên phải giải thích hoặc điều chỉnh ngưỡng bằng baseline của mình.
+  rationale: >
+    Baseline đo được (20 request, trước CP1): P50 448 ms, P95 1164 ms, P99 1481 ms,
+    retrieval success 100%, 0 lỗi. Sau khi prompt được cache, request ổn định ~160 ms;
+    request đầu tiên sau khi restart có thể mất 1-8 s vì phải fetch prompt từ Langfuse.
+    Ngưỡng 3000 ms cao hơn P99 baseline khoảng 2 lần nên không báo động giả vì dao động
+    bình thường, nhưng bắt được rag_slow (+2.5 s/request). 99.5% nghĩa là cho phép 1/200
+    request chậm/lỗi — đủ chặt cho một chatbot hỗ trợ, vẫn chừa chỗ cho cold start sau deploy.
+  error_budget:
+    formula: 'budget_bad_requests = (1 - 0.995) * total_requests_in_28d'
+    example_at_1_rpm: >
+      1 request/phút × 60 × 24 × 28 = 40,320 request/28 ngày
+      → được phép tối đa 0.005 × 40,320 ≈ 201 request chậm hoặc lỗi.
+    burn_rate: >
+      burn_rate = (bad / total trong cửa sổ) / 0.005. Burn rate 1 tiêu hết budget đúng 28 ngày;
+      burn rate 14.4 duy trì 1 giờ tiêu 14.4 × 1h / 672h ≈ 2.1% budget và sẽ cạn budget sau ~1.9 ngày.
+    policy: >
+      Còn > 50% budget: deploy/đổi prompt bình thường. Còn 10-50%: chỉ deploy khi có rollback plan
+      (prompt label production có thể rollback ngay). < 10% hoặc đã cạn: freeze thay đổi prompt/model,
+      ưu tiên fix độ tin cậy.
 guardrails:
   error_rate_pct_max: 2
   daily_cost_usd_max: 2.5

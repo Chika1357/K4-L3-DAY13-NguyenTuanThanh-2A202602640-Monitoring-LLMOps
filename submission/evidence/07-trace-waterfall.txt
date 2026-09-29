@@ -1,0 +1,27 @@
+# CP2 — 2026-09-29T08:38:29Z — Langfuse project day13-k4-l3a-2A202602640
+# Waterfall text (bổ sung cho ảnh 07); prompt experiment: baseline→v1, candidate→v2, production(sau promote)→v2
+$ python scripts/find_trace.py req-7c4fc12a req-55203e89 req-9d0c0002 req-5882ac39
+
+req-7c4fc12a -> trace_id=951c49ac7800d75caddfa7cbb36c89b2
+  lab-agent-run   AGENT      +     0ms    1280ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms       1ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +     1ms    1128ms level=DEFAULT
+    └─ llm-generate    GENERATION +  1129ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 32, 'output': 177, 'total': 209} cost=0.002751 prompt=day13-chat v1
+
+req-55203e89 -> trace_id=d9e4c07a9962b3e946971ce880bb06fe
+  lab-agent-run   AGENT      +     0ms    1214ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms       0ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +     0ms    1062ms level=DEFAULT
+    └─ llm-generate    GENERATION +  1062ms     152ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 49, 'output': 130, 'total': 179} cost=0.002097 prompt=day13-chat v2
+
+req-9d0c0002 -> trace_id=78a2d8de83cd7fa3fba5c4fd40526315
+  lab-agent-run   AGENT      +     0ms    1306ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms       1ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +     1ms    1153ms level=DEFAULT
+    └─ llm-generate    GENERATION +  1155ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 49, 'output': 149, 'total': 198} cost=0.002382 prompt=day13-chat v2
+
+req-5882ac39 -> trace_id=62a6e798f56af2afc723c5eee595a287
+  lab-agent-run   AGENT      +     0ms     151ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +     0ms       1ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +     1ms     150ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 53, 'output': 121, 'total': 174} cost=0.001974 prompt=day13-chat v2

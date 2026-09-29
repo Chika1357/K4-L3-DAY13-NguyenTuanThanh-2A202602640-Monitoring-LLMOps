@@ -1,0 +1,75 @@
+# CP2 — 2026-09-29T08:38:29Z — Langfuse project day13-k4-l3a-2A202602640
+# 12 trace gần nhất do workload của tôi tạo (load_test --concurrency 5 + rag_slow practice)
+$ python scripts/find_trace.py <12 correlation_id cuối trong data/logs.jsonl>
+
+req-4f7406fc -> trace_id=0cb25d285a358bd53e5cb06822318523
+  lab-agent-run   AGENT      +     0ms     151ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +     0ms       0ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +     1ms     150ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 44, 'output': 100, 'total': 144} cost=0.001632 prompt=day13-chat v2
+
+req-00ea1509 -> trace_id=278b64e23aab504d24e2657164ca6284
+  lab-agent-run   AGENT      +     0ms     152ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms       1ms level=DEFAULT
+    └─ llm-generate    GENERATION +     1ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 53, 'output': 155, 'total': 208} cost=0.002484 prompt=day13-chat v2
+    └─ prompt-resolve  SPAN       +     1ms       0ms level=DEFAULT
+
+req-408df527 -> trace_id=ca2012945e633b061828d1f4836b7a00
+  lab-agent-run   AGENT      +     0ms    3553ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2501ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2501ms     900ms level=DEFAULT
+    └─ llm-generate    GENERATION +  3402ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 49, 'output': 115, 'total': 164} cost=0.001872 prompt=day13-chat v2
+
+req-89409833 -> trace_id=465d5b7b4082f02049a15b2ca65216dd
+  lab-agent-run   AGENT      +     0ms    2654ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2502ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2502ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2502ms     152ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 53, 'output': 84, 'total': 137} cost=0.001419 prompt=day13-chat v2
+
+req-22b84dbc -> trace_id=798f2ecb81983972880123153c9a7f28
+  lab-agent-run   AGENT      +     0ms    2653ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2501ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2501ms     152ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 60, 'output': 84, 'total': 144} cost=0.00144 prompt=day13-chat v2
+    └─ prompt-resolve  SPAN       +  2501ms       0ms level=DEFAULT
+
+req-13c3067d -> trace_id=20dcb647fe28c5bfcab9e97fe20aa0a2
+  lab-agent-run   AGENT      +     0ms    2653ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     1ms    2500ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2501ms       1ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2502ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 50, 'output': 151, 'total': 201} cost=0.002415 prompt=day13-chat v2
+
+req-c4de28e9 -> trace_id=7d23c09d1df6a5d905be7ce4c6b697cd
+  lab-agent-run   AGENT      +     0ms    2652ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     1ms    2500ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2501ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 56, 'output': 151, 'total': 207} cost=0.002433 prompt=day13-chat v2
+    └─ prompt-resolve  SPAN       +  2501ms       0ms level=DEFAULT
+
+req-85febb6c -> trace_id=90b356816159942db944ab328a90819e
+  lab-agent-run   AGENT      +     0ms    2652ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2500ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2500ms     152ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 51, 'output': 128, 'total': 179} cost=0.002073 prompt=day13-chat v2
+    └─ prompt-resolve  SPAN       +  2500ms       0ms level=DEFAULT
+
+req-53feafda -> trace_id=e7da5c7cf79a10229916e477b0b61d03
+  lab-agent-run   AGENT      +     0ms    2654ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     1ms    2501ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2502ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2503ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 46, 'output': 124, 'total': 170} cost=0.001998 prompt=day13-chat v2
+
+req-b95303ca -> trace_id=a550c1b3bbc9de754beeca98df591637
+  lab-agent-run   AGENT      +     0ms    2653ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2502ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2502ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2502ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 53, 'output': 107, 'total': 160} cost=0.001764 prompt=day13-chat v2
+
+req-a9943cee -> trace_id=270788661ee57a39c679584a2169e269
+  lab-agent-run   AGENT      +     0ms    2653ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     1ms    2501ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2502ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 44, 'output': 135, 'total': 179} cost=0.002157 prompt=day13-chat v2
+    └─ prompt-resolve  SPAN       +  2502ms       0ms level=DEFAULT
+
+req-26776fee -> trace_id=b1b3743d7083e1d565867098a383f569
+  lab-agent-run   AGENT      +     0ms    2653ms level=DEFAULT
+    └─ retrieval       RETRIEVER  +     0ms    2501ms level=DEFAULT
+    └─ prompt-resolve  SPAN       +  2502ms       0ms level=DEFAULT
+    └─ llm-generate    GENERATION +  2502ms     151ms level=DEFAULT model=claude-sonnet-4-5 usage={'input': 44, 'output': 89, 'total': 133} cost=0.001467 prompt=day13-chat v2

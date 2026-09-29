@@ -4,9 +4,10 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from structlog.contextvars import bind_contextvars
 
+from . import dashboard, logging_config
 from .agent import LabAgent
 from .incidents import disable, enable, status
 from .logging_config import configure_logging, get_logger
@@ -44,6 +45,18 @@ async def health() -> dict:
 @app.get("/metrics")
 async def metrics() -> dict:
     return snapshot()
+
+
+@app.get("/dashboard/data")
+async def dashboard_data() -> dict:
+    return dashboard.compute_dashboard(
+        dashboard.load_records(logging_config.LOG_PATH), dashboard.load_contract()
+    )
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_page() -> HTMLResponse:
+    return HTMLResponse(dashboard.render_html(await dashboard_data()))
 
 
 @app.post("/chat", response_model=ChatResponse)
