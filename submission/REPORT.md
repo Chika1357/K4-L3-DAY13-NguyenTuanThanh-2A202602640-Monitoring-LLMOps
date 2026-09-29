@@ -31,9 +31,9 @@
 | Prompt rollback | Trước (production = v2): [`evidence/10-prompt-rollback-before.png`](evidence/10-prompt-rollback-before.png) — Sau (production = v1): [`evidence/10-prompt-rollback-after.png`](evidence/10-prompt-rollback-after.png) |
 | Dashboard runtime | ![Dashboard overview](evidence/11-dashboard-overview.png) |
 | Practice `rag_slow` (không phải challenge) | [`evidence/practice-rag-slow.txt`](evidence/practice-rag-slow.txt) |
-| Incident metric | `evidence/12-incident-metric.png`; chuỗi điều tra đầy đủ dạng text: [`evidence/incident-investigation.txt`](evidence/incident-investigation.txt) |
-| Incident log | `evidence/13-incident-log.png` |
-| Incident trace | `evidence/14-incident-trace.png` |
+| Incident metric | ![Incident metric](evidence/12-incident-metric.png) P95 phút 16:23 (giờ VN) = 2653 ms; chuỗi điều tra đầy đủ dạng text: [`evidence/incident-investigation.txt`](evidence/incident-investigation.txt) |
+| Incident log | ![Incident log](evidence/13-incident-log.png) 5 dòng `response_sent` feature `monitoring`, `latency_ms` ~2653, gồm `req-1f73f900` |
+| Incident trace | ![Incident trace](evidence/14-incident-trace.png) trace `5d910f49d19a1d4336f7e950da98a611`, `retrieval` 2.50 s / 2.65 s, metadata `correlation_id=req-1f73f900` (đã che public key) |
 
 ## 3. Kết quả kỹ thuật
 

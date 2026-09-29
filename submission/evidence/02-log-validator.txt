@@ -1,10 +1,10 @@
-# CP2 — 2026-09-29T08:41:18Z — base commit a29b439 + CP2 changes
+# CP4 final check — 2026-09-29T09:40:13Z
 $ python scripts/validate_logs.py
 --- Lab Verification Results ---
-Total log records analyzed: 126
+Total log records analyzed: 166
 Records with missing required fields: 0
 Records with missing enrichment (context): 0
-Unique correlation IDs found: 51
+Unique correlation IDs found: 72
 Potential PII leaks detected: 0
 
 --- Grading Scorecard (Estimates) ---
