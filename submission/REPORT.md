@@ -9,7 +9,7 @@
 - **Lớp:** K4-L3A
 - **Repository URL:** https://github.com/Chika1357/K4-L3-DAY13-NguyenTuanThanh-2A202602640-Monitoring-LLMOps
 - **Commit SHA cuối:**
-- **Challenge ID:**
+- **Challenge ID:** `day13-k4-l3a-monitoring-llmops-v1` (cohort K4, seed 1311)
 - **Tên project Langfuse cá nhân:** `day13-k4-l3a-2A202602640`
 
 ## 2. Evidence index
@@ -31,7 +31,7 @@
 | Prompt rollback | Trước (production = v2): [`evidence/10-prompt-rollback-before.png`](evidence/10-prompt-rollback-before.png) — Sau (production = v1): [`evidence/10-prompt-rollback-after.png`](evidence/10-prompt-rollback-after.png) |
 | Dashboard runtime | ![Dashboard overview](evidence/11-dashboard-overview.png) |
 | Practice `rag_slow` (không phải challenge) | [`evidence/practice-rag-slow.txt`](evidence/practice-rag-slow.txt) |
-| Incident metric | `evidence/12-incident-metric.png` |
+| Incident metric | `evidence/12-incident-metric.png`; chuỗi điều tra đầy đủ dạng text: [`evidence/incident-investigation.txt`](evidence/incident-investigation.txt) |
 | Incident log | `evidence/13-incident-log.png` |
 | Incident trace | `evidence/14-incident-trace.png` |
 
@@ -84,14 +84,14 @@
 
 ## 7. Điều tra challenge
 
-- **Challenge ID:**
-- **Khoảng thời gian điều tra:**
-- **Triệu chứng từ metrics:**
-- **Log line và correlation ID liên quan:**
-- **Trace ID và span gây ảnh hưởng:**
-- **Root cause:**
-- **Fix action:**
-- **Preventive measure:**
+- **Challenge ID:** `day13-k4-l3a-monitoring-llmops-v1` — file riêng do Lab Coach release cho K4-L3A, lưu tại `config/challenge.json` (gitignored, không sửa nội dung; sha256 `b11e6286…86f6bf`). Tôi cố ý không đọc trường `incident` trong file để kết luận chỉ dựa trên evidence.
+- **Khoảng thời gian điều tra:** 2026-09-29 09:23:40–09:23:59 UTC (16:23:40–16:23:59 giờ VN): bật incident + `load_test.py --challenge --concurrency 5` (5 request, feature `monitoring`). Ngay trước đó 09:23:36 chạy 10 request baseline để có mốc so sánh; 09:25 gửi request đối chứng; 09:25:30 tắt incident. Toàn bộ output: [`evidence/incident-investigation.txt`](evidence/incident-investigation.txt).
+- **Triệu chứng từ metrics:** panel **Latency**: P95 của phút 09:23 tăng từ ~152 ms (baseline 08:50 và 10 request ngay trước inject) lên **2655 ms** (~17×). TTFT P95 không đổi (50 ms) → phần chậm nằm **trước** LLM. Panel Errors: error rate 0%, retrieval success 100%; Cost/Tokens/Quality bình thường → không phải lỗi, không phải cost spike. Phía client, `load_test.py` đo **10.6–13.3 s** mỗi request.
+- **Log line và correlation ID liên quan:** lọc `response_sent` trong cửa sổ theo `feature`: `monitoring` n=5 `latency_ms` 2652–2655, trong khi `qa`/`summary` cùng phút 152–184 ms. Log đại diện (`req-1f73f900`): `{"event": "response_sent", "correlation_id": "req-1f73f900", "feature": "monitoring", "latency_ms": 2653, "ttft_ms": 50, "tool_name": "retrieval", "tool_success": true, ...}`. Các `response_sent` cách nhau đều ~2.66 s (09:23:48.3 → 50.9 → 53.6 → 56.3 → 58.9) → các request bị xử lý **tuần tự**.
+- **Trace ID và span gây ảnh hưởng:** `req-1f73f900` → trace `5d910f49d19a1d4336f7e950da98a611`: root `lab-agent-run` 2653 ms, trong đó **`retrieval` (RETRIEVER) 2501 ms (94%)**, `prompt-resolve` 0 ms, `llm-generate` 151 ms (bằng baseline). Cả 5 trace challenge giống hệt (`retrieval` 2500–2501 ms): `fd1a5caf…`, `5d910f49…`, `aa17a742…`, `a90154f1…`, `f49191b3…`. Trace baseline `req-2b62381c` → `23541982…`: `retrieval` 1 ms. Đối chứng: request `feature=qa` gửi khi incident còn bật (`req-c0a70001` → `f5131d0d…`) cũng có `retrieval` 2500 ms → vấn đề ở **tầng retrieval cho mọi feature**, `monitoring` chỉ là feature duy nhất có traffic trong cửa sổ.
+- **Root cause:** bước retrieval (vector store/RAG) bị chậm thêm cố định ~2.5 s mỗi lần gọi (kịch bản `rag_slow`). Metric (P95 tăng, TTFT không đổi, không lỗi) → log (đúng các request trong cửa sổ, `latency_ms` ~2653) → trace (span `retrieval` chiếm 94%, span khác bằng baseline) cùng chỉ về một nguyên nhân. Hệ quả thứ hai: `LabAgent.run` là code đồng bộ chạy trong endpoint `async`, nên retrieval chậm **chặn event loop** — 5 request concurrent phải xếp hàng, người dùng chờ 10–13 s dù mỗi request chỉ xử lý 2.65 s.
+- **Fix action:** (1) Tắt nguồn gây chậm (`inject_incident.py --disable` lúc 09:25:30Z) và xác minh bằng request mới cùng feature `monitoring` (`req-f1e00001` → trace `be5b9666…`: `retrieval` 0 ms, tổng 151 ms, client 0.157 s). (2) Trên hệ thống thật: đặt timeout cho retrieval (ví dụ 500 ms) và fallback trả lời không có context/`No domain document` thay vì chờ; kiểm tra tình trạng vector store (index, kết nối, tải).
+- **Preventive measure:** (1) **Phát hiện đúng trải nghiệm người dùng:** alert `chat_latency_p95_high` (P95 > 3000 ms) **không kích hoạt** trong sự cố này vì `latency_ms` phía server chỉ 2653 ms và phút đó còn trộn request baseline, trong khi người dùng chờ 10–13 s. Cần thêm alert theo span: `retrieval` P95 > 500 ms trong 5m (baseline ~1 ms), và đo latency end-to-end ở client/synthetic probe hoặc reverse proxy để thấy cả thời gian xếp hàng. (2) **Cô lập tác động:** chạy agent trong threadpool (`await run_in_threadpool(agent.run, ...)`) hoặc dùng retrieval async để một dependency chậm không chặn toàn bộ request khác. (3) Dashboard thêm panel/breakdown latency theo `feature` và theo span để thấy ngay bước nào chậm.
 
 ## 8. Giải thích và tự đánh giá
 
