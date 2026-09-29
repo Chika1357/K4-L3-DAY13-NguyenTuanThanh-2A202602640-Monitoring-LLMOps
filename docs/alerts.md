@@ -2,7 +2,7 @@
 
 Mỗi alert dựa trên triệu chứng người dùng hoặc SLO, không dựa trực tiếp vào tên implementation nội bộ. Rule nằm trong [`../config/alert_rules.yaml`](../config/alert_rules.yaml); nguồn dữ liệu là `data/logs.jsonl`, xem nhanh trên dashboard `http://127.0.0.1:8000/dashboard`.
 
-Quy trình chung cho mọi alert: **Metrics → Logs → Traces**. Xác định khoảng thời gian trên dashboard → lọc log trong khoảng đó lấy `correlation_id`/`trace_id` → mở trace trên Langfuse (filter metadata `correlation_id`) → so sánh thời gian/level của các span `retrieval`, `prompt-resolve`, `llm-generate`.
+Quy trình chung cho mọi alert: **Metrics → Logs → Traces**. Xác định khoảng thời gian trên dashboard → lọc log trong khoảng đó lấy `correlation_id` → mở trace trên Langfuse (filter metadata `correlation_id`, hoặc dùng `scripts/find_trace.py`) → so sánh thời gian/level của các span `retrieval`, `prompt-resolve`, `llm-generate`.
 
 ## Alert 1
 
@@ -15,8 +15,8 @@ Quy trình chung cho mọi alert: **Metrics → Logs → Traces**. Xác định 
 - Ảnh hưởng tới người dùng: câu trả lời chậm rõ rệt; mỗi request > 3 s tiêu error budget của SLO
 - Ba bước kiểm tra đầu tiên:
   1. Dashboard panel **Latency**: P50 có tăng cùng P95 không (toàn bộ chậm) hay chỉ tail; TTFT P95 có tăng không (chậm ở LLM hay trước LLM).
-  2. Lọc log chậm: `python -c "import json; [print(r['correlation_id'], r.get('trace_id'), r['latency_ms']) for r in map(json.loads, open('data/logs.jsonl', encoding='utf-8')) if r.get('event')=='response_sent' and r['latency_ms']>3000]"`.
-  3. Mở trace theo `trace_id`: span nào chiếm phần lớn thời gian — `retrieval` (vector store chậm), `prompt-resolve` (Langfuse fetch/cold cache) hay `llm-generate` (provider chậm).
+  2. Lọc log chậm: `python -c "import json; [print(r['correlation_id'], r['latency_ms']) for r in map(json.loads, open('data/logs.jsonl', encoding='utf-8')) if r.get('event')=='response_sent' and r['latency_ms']>3000]"`.
+  3. Tra trace bằng `python scripts/find_trace.py <correlation_id>` hoặc filter metadata trong Langfuse: span nào chiếm phần lớn thời gian — `retrieval` (vector store chậm), `prompt-resolve` (Langfuse fetch/cold cache) hay `llm-generate` (provider chậm).
 - Mitigation tạm thời: nếu `retrieval` chậm → giảm top-k/timeout retrieval, bật fallback trả lời không dùng context; nếu `prompt-resolve` chậm → kiểm tra kết nối Langfuse, tăng `cache_ttl_seconds`, prompt vẫn fallback về template local; nếu `llm-generate` chậm → chuyển model nhỏ hơn/giảm max tokens. Báo trạng thái trên Slack mỗi 30 phút.
 - Owner: Nguyễn Tuấn Thành (on-call)
 

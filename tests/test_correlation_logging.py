@@ -58,7 +58,8 @@ def test_propagates_client_request_id(monkeypatch, tmp_path: Path) -> None:
 
 def test_rejects_unsafe_client_request_id() -> None:
     assert resolve_correlation_id("req-abcdef12") == "req-abcdef12"
-    for bad in (None, "", "x" * 65, "evil\ninjected", "has space"):
+    # Last two look like a VN phone number; correlation_id is not scrubbed, so reject.
+    for bad in (None, "", "x" * 65, "evil\ninjected", "has space", "0987654321", "req-0987654321"):
         assert REQUEST_ID_FORMAT.fullmatch(resolve_correlation_id(bad))
 
 

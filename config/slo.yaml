@@ -13,9 +13,11 @@ primary_slo:
     Baseline đo được (20 request, trước CP1): P50 448 ms, P95 1164 ms, P99 1481 ms,
     retrieval success 100%, 0 lỗi. Sau khi prompt được cache, request ổn định ~160 ms;
     request đầu tiên sau khi restart có thể mất 1-8 s vì phải fetch prompt từ Langfuse.
-    Ngưỡng 3000 ms cao hơn P99 baseline khoảng 2 lần nên không báo động giả vì dao động
-    bình thường, nhưng bắt được rag_slow (+2.5 s/request). 99.5% nghĩa là cho phép 1/200
-    request chậm/lỗi — đủ chặt cho một chatbot hỗ trợ, vẫn chừa chỗ cho cold start sau deploy.
+    Ngưỡng 3000 ms cao hơn P99 baseline khoảng 2 lần. Practice rag_slow từng vượt
+    ngưỡng khi cộng thêm thời gian fetch prompt, nhưng challenge rag_slow ổn định chỉ
+    ~2653 ms/request nên alert P95 theo latency_ms không bắt được; cần thêm đo latency
+    đầu cuối hoặc alert theo span retrieval. 99.5% nghĩa là cho phép 1/200 request
+    chậm/lỗi theo SLI hiện tại.
   error_budget:
     formula: 'budget_bad_requests = (1 - 0.995) * total_requests_in_28d'
     example_at_1_rpm: >

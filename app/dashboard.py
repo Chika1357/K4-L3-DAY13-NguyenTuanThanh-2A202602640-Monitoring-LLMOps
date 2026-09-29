@@ -258,7 +258,8 @@ for (const p of D.panels) {
   document.getElementById('grid').appendChild(card);
   const datasets = Object.entries(p.series).map(([name, data], i) => ({
     label: name, data, borderColor: colors[i % colors.length], backgroundColor: colors[i % colors.length],
-    spanGaps: true, pointRadius: 2, borderWidth: 2, tension: 0.2,
+    // Minutes without requests stay as gaps; joining them would draw a fake trend.
+    spanGaps: false, pointRadius: 3, borderWidth: 2, tension: 0.2,
   }));
   if (p.id === 'traffic') { datasets[0].type = 'bar'; }
   datasets.push({ label: `threshold ${opName[t.operator]} ${t.value}`, data: labels.map(() => t.value),

@@ -8,6 +8,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from structlog.contextvars import bind_contextvars, clear_contextvars
 
+from .pii import scrub_text
+
 # Accept client-provided IDs only if they are short and log-safe; anything else
 # (empty, too long, newlines/control chars) is replaced to prevent log injection.
 _SAFE_REQUEST_ID = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
@@ -18,8 +20,11 @@ def new_correlation_id() -> str:
 
 
 def resolve_correlation_id(header_value: str | None) -> str:
-    if header_value and _SAFE_REQUEST_ID.fullmatch(header_value.strip()):
-        return header_value.strip()
+    candidate = (header_value or "").strip()
+    # correlation_id is exempt from log scrubbing, so a client ID that looks like
+    # PII (e.g. "0987654321") must be replaced here instead of logged verbatim.
+    if _SAFE_REQUEST_ID.fullmatch(candidate) and scrub_text(candidate) == candidate:
+        return candidate
     return new_correlation_id()
 
 

@@ -150,3 +150,31 @@ def test_retrieval_failure_marks_observation_as_error(monkeypatch) -> None:
     (retrieval,) = observations  # generation never starts
     assert retrieval.updates["level"] == "ERROR"
     assert "Vector store timeout" in retrieval.updates["status_message"]
+
+
+def test_request_fields_are_scrubbed_before_reaching_langfuse(monkeypatch) -> None:
+    client = RecordingLangfuseClient()
+    monkeypatch.setattr(agent_module, "get_langfuse_client", lambda: client)
+    monkeypatch.setattr(agent_module, "tracing_enabled", lambda: True)
+    propagated: list[dict] = []
+
+    @contextmanager
+    def record_attributes(**kwargs):
+        propagated.append(kwargs)
+        yield
+
+    monkeypatch.setattr(agent_module, "propagate_attributes", record_attributes)
+
+    agent_module.LabAgent.run.__wrapped__(
+        agent_module.LabAgent(),
+        user_id="student-01",
+        feature="qa student@vinuni.edu.vn",
+        session_id="s-0901234567",
+        message="Explain traces",
+        correlation_id="req-12345678",
+    )
+
+    captured = repr(propagated[0])
+    assert "0901234567" not in captured
+    assert "student@vinuni.edu.vn" not in captured
+    assert propagated[0]["session_id"] == "s-[REDACTED_PHONE_VN]"

@@ -1,6 +1,12 @@
 # K4-L3A — Lab Day 13: Monitoring & LLMOps
 
-> - **Loại repository:** đề bài/starter dành riêng cho lớp K4-L3A
+## Bài nộp cá nhân của Nguyễn Tuấn Thành
+
+Repo này bắt đầu từ starter K4-L3A và chứa phần triển khai, kết quả chạy và báo cáo cá nhân của tôi. Xem [báo cáo và evidence](submission/REPORT.md) để đối chiếu từng kết quả với mã nguồn và ảnh chụp từ project Langfuse cá nhân. Các chỉ số token/cost dùng `FakeLLM` để mô phỏng; tên model trong log/trace là nhãn cấu hình, không phải bằng chứng đã gọi API model thật.
+
+Phần hướng dẫn bên dưới là nội dung starter của bài lab, được giữ lại để người đọc có thể chạy lại và so sánh với baseline.
+
+> - **Nguồn gốc:** starter dành riêng cho lớp K4-L3A; repository hiện tại là bài nộp cá nhân
 > - **Hình thức làm bài:** cá nhân
 > - **Thời gian trên lớp:** 14:00–18:00 (240 phút)
 > - **Deadline mặc định:** 23:59:59 trong ngày học, múi giờ Asia/Ho_Chi_Minh
@@ -157,7 +163,7 @@ git log -1 --oneline
 
 ## Tên repo bài nộp
 
-Repo này là **repo đề bài**, nên tên chính thức là `K4-L3A-Day13-Monitoring-LLMOps` (mẫu `K4-L3A-TenBai`). Repo bài nộp cá nhân dùng mẫu:
+Repo starter gốc có tên `K4-L3A-Day13-Monitoring-LLMOps` (mẫu `K4-L3A-TenBai`). Repository bài nộp cá nhân này dùng mẫu:
 
 ```text
 K4-L3-DAY13-HoVaTen-MSSV-Monitoring-LLMOps

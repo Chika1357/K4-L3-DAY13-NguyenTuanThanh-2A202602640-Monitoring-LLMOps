@@ -45,14 +45,18 @@ class LabAgent:
         correlation_id: str,
     ) -> AgentResult:
         langfuse_client = get_langfuse_client()
+        # session_id and feature come straight from the request body; scrub them
+        # before they leave the process as trace attributes, tags or metadata.
+        safe_session_id = scrub_text(session_id)
+        safe_feature = scrub_text(feature)
         with propagate_attributes(
             user_id=hash_user_id(user_id),
-            session_id=session_id,
-            tags=["lab", feature, self.model],
+            session_id=safe_session_id,
+            tags=["lab", safe_feature, self.model],
             trace_name="day13-agent-request",
             environment=os.getenv("APP_ENV", "dev"),
             metadata={
-                "feature": feature,
+                "feature": safe_feature,
                 "model": self.model,
                 "correlation_id": correlation_id,
             },
