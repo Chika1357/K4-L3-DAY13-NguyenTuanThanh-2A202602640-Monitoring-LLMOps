@@ -8,7 +8,7 @@
 - **MSSV:** 2A202602640
 - **Lớp:** K4-L3A
 - **Repository URL:** https://github.com/Chika1357/K4-L3-DAY13-NguyenTuanThanh-2A202602640-Monitoring-LLMOps
-- **Commit SHA cuối:**
+- **Commit SHA cuối:** Xem SHA cuối nộp trên LMS/Codelabs.
 - **Challenge ID:** `day13-k4-l3a-monitoring-llmops-v1` (cohort K4, seed 1311)
 - **Tên project Langfuse cá nhân:** `day13-k4-l3a-2A202602640`
 
