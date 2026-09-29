@@ -27,8 +27,8 @@
 | Trace list | `evidence/06-trace-list.png`; danh sách trace ID + waterfall text: [`evidence/06-trace-ids.txt`](evidence/06-trace-ids.txt) |
 | Trace waterfall | `evidence/07-trace-waterfall.png`; bản text: [`evidence/07-trace-waterfall.txt`](evidence/07-trace-waterfall.txt) |
 | Trace metadata | `evidence/08-trace-metadata.png` |
-| Prompt versions | `evidence/09-prompt-versions.png`; bản text: [`evidence/09-prompt-versions.txt`](evidence/09-prompt-versions.txt) |
-| Prompt rollback | `evidence/10-prompt-rollback.png` |
+| Prompt versions | ![Prompt versions](evidence/09-prompt-versions.png) [`evidence/09-prompt-versions.png`](evidence/09-prompt-versions.png); bản text: [`evidence/09-prompt-versions.txt`](evidence/09-prompt-versions.txt) |
+| Prompt rollback | Trước (production = v2): [`evidence/10-prompt-rollback-before.png`](evidence/10-prompt-rollback-before.png) — Sau (production = v1): [`evidence/10-prompt-rollback-after.png`](evidence/10-prompt-rollback-after.png) |
 | Dashboard runtime | `evidence/11-dashboard-overview.png` |
 | Practice `rag_slow` (không phải challenge) | [`evidence/practice-rag-slow.txt`](evidence/practice-rag-slow.txt) |
 | Incident metric | `evidence/12-incident-metric.png` |
@@ -69,8 +69,8 @@
   - label `baseline` → v1: `req-7c4fc12a` → trace `951c49ac7800d75caddfa7cbb36c89b2`
   - label `candidate` → v2: `req-55203e89` → trace `d9e4c07a9962b3e946971ce880bb06fe`
   - label `production` sau khi promote v2: `req-9d0c0002` → trace `78a2d8de83cd7fa3fba5c4fd40526315` (generation gắn `day13-chat v2`)
-  - label `production` sau khi rollback về v1: _(điền sau khi rollback)_
-- **Cách promote và rollback `production`:** label trong Langfuse là duy nhất trong một prompt, gán `production` cho version nào thì version cũ tự mất label. Promote: `python scripts/prompt_versions.py set-production 2` (hoặc UI: Prompts → `day13-chat` → v2 → Labels → thêm `production`). Rollback: gán lại `production` cho v1. App không cần deploy lại — `resolve_prompt` fetch theo label, SDK cache 60 s nên thay đổi có hiệu lực tối đa sau 60 s; nếu Langfuse lỗi app fallback template local và trace ghi `prompt_source=local-fallback`.
+  - label `production` sau khi rollback về v1 (thao tác trên UI Langfuse): request đầu `req-4b0a1101` → trace `2b14287c583d12a1db31bd53961e3798` vẫn dùng v2; request kế tiếp `req-4b0a1102` → trace `740a38db9f8679a86d3c72b2b2ea260f` dùng **v1** (tokens_in 49 → 32)
+- **Cách promote và rollback `production`:** label trong Langfuse là duy nhất trong một prompt, gán `production` cho version nào thì version cũ tự mất label. Promote: `python scripts/prompt_versions.py set-production 2` (hoặc UI: Prompts → `day13-chat` → v2 → Labels → thêm `production`). Rollback: gán lại `production` cho v1. App không cần deploy lại — `resolve_prompt` fetch theo label. SDK cache 60 s theo kiểu stale-while-revalidate: khi cache hết hạn, request đầu tiên vẫn nhận version cũ trong lúc SDK refresh nền, request sau mới nhận version mới (đúng như `req-4b0a1101` → v2, `req-4b0a1102` → v1). Vì vậy khi rollback khẩn cấp cần kiểm tra trace của request **sau** thời điểm đổi label, không kết luận từ request đầu tiên; nếu Langfuse lỗi app fallback template local và trace ghi `prompt_source=local-fallback`.
 
 ## 6. Dashboard, SLO và alerts
 
