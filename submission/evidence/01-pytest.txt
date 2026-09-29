@@ -1,0 +1,4 @@
+# CP1 — 2026-09-29T08:16:44Z — base commit 13b6066 + CP1 changes
+$ python -m pytest -q
+...................................                                      [100%]
+35 passed in 9.89s

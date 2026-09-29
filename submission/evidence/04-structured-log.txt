@@ -1,0 +1,40 @@
+# CP1 — 2026-09-29T08:16:44Z — base commit 13b6066 + CP1 changes
+# 1 request (request_received + response_sent) from data/logs.jsonl, pretty-printed
+{
+  "service": "api",
+  "payload": {
+    "message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"
+  },
+  "event": "request_received",
+  "feature": "qa",
+  "model": "claude-sonnet-4-5",
+  "env": "dev",
+  "correlation_id": "req-cae89796",
+  "user_id_hash": "2055254ee30a",
+  "session_id": "s01",
+  "level": "info",
+  "ts": "2026-09-29T08:16:08.364544Z"
+}
+{
+  "service": "api",
+  "latency_ms": 6408,
+  "ttft_ms": 50,
+  "tokens_in": 36,
+  "tokens_out": 176,
+  "cost_usd": 0.002748,
+  "quality_score": 0.9,
+  "tool_name": "retrieval",
+  "tool_success": true,
+  "payload": {
+    "answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."
+  },
+  "event": "response_sent",
+  "feature": "qa",
+  "model": "claude-sonnet-4-5",
+  "env": "dev",
+  "correlation_id": "req-cae89796",
+  "user_id_hash": "2055254ee30a",
+  "session_id": "s01",
+  "level": "info",
+  "ts": "2026-09-29T08:16:15.243995Z"
+}

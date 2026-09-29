@@ -1,0 +1,18 @@
+# CP1 — 2026-09-29T08:16:44Z — base commit 13b6066 + CP1 changes
+# Input (fake PII) sent to POST /chat with x-request-id: req-cafe1234:
+#   "Toi la a.b@vinuni.edu.vn, sdt 090 123 4567, CCCD 001203004567"
+# Sample queries also contain: student@vinuni.edu.vn, 0987654321, 4111 1111 1111 1111
+
+$ grep -c for raw PII in data/logs.jsonl (expect 0 each)
+  a.b@vinuni.edu.vn        0
+  090 123 4567             0
+  001203004567             0
+  student@vinuni.edu.vn    0
+  0987654321               0
+  4111 1111 1111 1111      0
+
+$ grep REDACTED data/logs.jsonl (request_received lines)
+{"service": "api", "payload": {"message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"}, "event": "request_received", "feature": "qa", "model": "claude-sonnet-4-5", "env": "dev", "correlation_id": "req-cae89796", "user_id_hash": "2055254ee30a", "session_id": "s01", "level": "info", "ts": "2026-09-29T08:16:08.364544Z"}
+{"service": "api", "payload": {"message_preview": "Here is my phone [REDACTED_PHONE_VN], what should be logged?"}, "event": "request_received", "feature": "qa", "model": "claude-sonnet-4-5", "env": "dev", "correlation_id": "req-a70e5aa8", "user_id_hash": "64f6ec689229", "session_id": "s05", "level": "info", "ts": "2026-09-29T08:16:24.750795Z"}
+{"service": "api", "payload": {"message_preview": "What is the policy for PII and credit card [REDACTED_CREDIT_CARD]?"}, "event": "request_received", "feature": "qa", "model": "claude-sonnet-4-5", "env": "dev", "correlation_id": "req-b1f82776", "user_id_hash": "4d14d5d4f719", "session_id": "s09", "level": "info", "ts": "2026-09-29T08:16:27.606401Z"}
+{"service": "api", "payload": {"message_preview": "Toi la [REDACTED_EMAIL], sdt [REDACTED_PHONE_VN], CCCD [REDACTED_CCCD]"}, "event": "request_received", "feature": "qa", "model": "claude-sonnet-4-5", "env": "dev", "correlation_id": "req-cafe1234", "user_id_hash": "b464b576d729", "session_id": "s-pii-demo", "level": "info", "ts": "2026-09-29T08:16:28.926442Z"}

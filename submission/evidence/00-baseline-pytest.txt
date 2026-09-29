@@ -1,0 +1,4 @@
+# Baseline CP0 — 2026-09-29T08:10:38Z — commit 13b6066
+$ python -m pytest -q
+......................                                                   [100%]
+22 passed in 10.23s
